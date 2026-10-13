@@ -7,6 +7,8 @@ from frappe import _
 from frappe.model.document import Document
 from frappe.utils import nowdate
 
+API_REQUEST_TIMEOUT = 15
+
 
 class CurrencyExchangeSettings(Document):
 	# begin: auto-generated types
@@ -88,7 +90,7 @@ class CurrencyExchangeSettings(Document):
 		api_url = self.api_endpoint.format(transaction_date=nowdate(), to_currency="INR", from_currency="USD")
 
 		try:
-			response = requests.get(api_url, params=params)
+			response = requests.get(api_url, params=params, timeout=API_REQUEST_TIMEOUT)
 		except requests.exceptions.RequestException as e:
 			frappe.throw(_("Error: {0}").format(str(e)))
 

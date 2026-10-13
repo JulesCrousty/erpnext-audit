@@ -9,6 +9,8 @@ from frappe.utils.nestedset import get_root_of
 
 from erpnext import get_default_company
 
+CURRENCY_EXCHANGE_API_TIMEOUT = 15
+
 
 def get_pegged_currencies():
 	pegged_currencies = frappe.get_all(
@@ -135,7 +137,11 @@ def get_exchange_rate(
 			params = {}
 			for row in settings.req_params:
 				params[row.key] = format_ces_api(row.value, req_params)
-			response = requests.get(format_ces_api(settings.api_endpoint, req_params), params=params)
+			response = requests.get(
+				format_ces_api(settings.api_endpoint, req_params),
+				params=params,
+				timeout=CURRENCY_EXCHANGE_API_TIMEOUT,
+			)
 			# expire in 6 hours
 			response.raise_for_status()
 			value = response.json()
